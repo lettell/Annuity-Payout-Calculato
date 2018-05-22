@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="decimal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/4.2.2/math.min.js"></script>
+    <style>          
+            .formGroup {
+                max-width: 350px;
+                border: 1px solid black;
+                padding: 1rem;
+                background: #dee1e3;
+            }
+            .form {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .form-field {
+                width: 100%;
+                display: flex;
+                padding: 1rem;
+                align-items: flex-end;
+            }
+            .form-input {
+                padding: 3px;
+                font-size: 16px;
+                text-align: right;
+                border: 0;
+                outline: 0;
+                background: transparent;
+                border-bottom: 1px solid black;
+            }
+            .hidden {
+                display: none;
+            }
+            .show {
+                display: block;
+            }
+            .btn {
+                background: #0099da;
+                border: 1px solid #0099da;
+                color: #ffffff;
+                font-size: 18px;
+                line-height: 2;
+            }
+            .full-width {
+                width: 100%;
+            }
+            .container {
+                display: flex;
+                flex-wrap: wrap;
+            }
+    </style>
+</head>
+
+<body>
+    <main>
+        <article class="container">      
+            <section class="formGroup" >
+                <h1>Annuity Payout Calculator</h1>
+                
+                <form class="form" id="annuityForm">
+                    <div class="form-field">
+                        <label for="pricipal">Loan Amount:</label>
+                        <input class="form-input" type="number" id="loanAmount" step="0.01" min="1" required>
+                        <div>€</div>
+                    </div>
+    
+                    <div class="form-field">
+                        <label for="loanTerm">Loan Term:</label>
+                        <input class="form-input" type="number" id="loanTerm" min="1" max="1200" required>
+                        <div>months</div>
+                    </div>
+                    <div class="form-field">
+                        <label for="interestRate">Interest Rate:</label>
+                        <input type="number" id="interestRate" class="form-input" step="0.01" min="0.01" max="1000" required>
+                        <div>%</div>
+                    </div>
+                    <div class="form-field">
+                        <label for="">Start Date:</label>
+                        <input type="date" id="startDate" class="form-input" required>
+                    </div>
+                    <div class="form-field">
+                        <button type="submit" class="btn full-width">Calculate</button>
+
+                    </div>
+                </form>
+                <form class="hidden form" id="annuityUpdate">
+                    <h3>Change Interest Rate ? </h3>
+                        <div class="form-field">
+                            <label for="from">From numnber of payments</label>
+                            <input type="number" id="from" class="form-input">
+                        </div>
+                        <div class="form-field">
+                            <label for="interestR">Interest Rate:</label>
+                            <input type="text" id="interestR" class="form-input">
+                            <div>%</div>
+                        </div>
+                        <div class="form-field">
+                                <button class="btn full-width" type="submit">Update</button>
+                        </div>
+                </form>
+            </section>
+            <section id="shedule">
+            </section>
+            <section id="info" class="hidden">
+            </section>
+        </article>
+
+
+    </main>
+    <script src="script.js"></script>
+</body>
+
+</html>
