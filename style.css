@@ -1,0 +1,120 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+         /* main styles */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .btn {
+            background: #0099da;
+            border: 1px solid #0099da;
+            color: #ffffff;
+            font-size: 18px;
+            line-height: 2;
+        }
+
+        .full-width {
+            width: 100%;
+        }
+        /* navigation */
+        .nav-tabs {
+            display: flex;
+            padding: .5rem;
+        
+        }
+        .nav-tabs > li > a {
+            cursor: pointer;
+            color: white;
+            font-size: 18px;
+            padding: .5rem;
+            text-decoration: none;
+        
+        }
+        .nav-tabs > li > a:hover {
+            cursor: pointer;
+            color: #0099da;
+            text-decoration: none;
+        }
+        .nav-tabs > li > a.red:hover {
+            cursor: pointer;
+            color: red;
+            text-decoration: none;
+        }
+         /* form section */
+        .section-form {
+            flex-grow: 1;
+            max-width: 600px;
+            align-self: center;
+            border: 1px solid black;
+            padding: 1rem;
+            background: #dee1e3;
+        }
+        .top-nav {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.322);
+        }
+        .form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-field {
+            width: 100%;
+            display: flex;
+            padding: 1rem;
+            align-items: flex-end;
+        }
+        .form-input {
+            padding: 3px;
+            font-size: 16px;
+            text-align: right;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            border-bottom: 1px solid black;
+        }
+         .hidden {
+            display: none;
+        }
+        .show {
+            display: block;
+        }
+        /* shedule */
+        
+        table {
+            border-collapse: collapse;
+        }
+        table > tr:nth-child(1) > th {
+            background: silver;
+            color: white;
+        }
+        table > tr > td, table > tr > th {
+            padding: 0.5rem;
+            font-size: 14px;
+            border-right: 1px solid #eee0e0;
+            border-bottom: 2px solid silver;
+            text-align:  center;
+        }
+        @media (max-width: 576px) { 
+.container {
+            width: 100%;
+        }
+.section-shedule {
+    overflow: auto;
+}
+}
+
+@media (min-width: 992px) { 
+.section-shedule {
+    height: 90vh;
+    overflow: auto;
+}
+}
