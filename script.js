@@ -2,6 +2,8 @@
 // co
 const _aF  = document.getElementById('annuityForm'),
       _aU = document.getElementById('annuityUpdate'),
+      tabs = document.getElementById('tabs'),
+      nCal = document.getElementById('new'),
       sheduleContainer = document.getElementById('shedule'),
       linkContainer = document.getElementById('info');
 let shedules = [],
@@ -18,9 +20,7 @@ _aF.addEventListener('submit',  function(event) {
         const  PV = this.loanAmount.value,
           ir = Number(this.interestRate.value),
           n = Number(this.loanTerm.value),
-          sd = this.startDate.value;
-    // validate 
-    
+          sd = this.startDate.value;   
     // calc payback annuity
      calcAnnuity(PV, ir, n, sd);
 })
@@ -37,6 +37,10 @@ _aU.addEventListener('submit',  function(event) {
 
      calcAnnuity(PV, ir, n, sd, id, fr);
 })
+nCal.addEventListener('click', function(){
+    stateTrack = 'new calculator';
+    checkState();
+});
 
 /* PV - loanAmount,  r - interest rate, n - loanTerm, sd - startDate;
 * k - annuty coficient, mp - Monthly payments
@@ -89,13 +93,42 @@ function calcAnnuity(PV, ir, n, sd, id, fr) {
     } else {
         let shedule = new paybackShedule(arr);
         shedules.push(shedule);
+        createTab();
+
     };
 
     genCSV(shedules.length-1);
     showTable(shedules.length-1);
     _aU.dataset.uid = shedules.length-1
+    document.getElementById('from').setAttribute("max", shedules[0].shedule.length-1);
 }
+function createTab() {
+    let li = document.createElement('li');
+    let a = document.createElement('a')
+    let b = document.createElement('a')
+    a.innerHTML = 'shedule nr:' + shedules.length + ' ';
+    a.dataset.id = shedules.length-1;
+    a.addEventListener('click', function(){
+        genCSV(a.dataset.id);
+        showTable(a.dataset.id);
+    })
+    li.appendChild(a);
+    b.innerHTML = ' X'
+    b.dataset.id = shedules.length-1;
+    b.classList.add('red');
+    b.addEventListener('click', function(){
+        deleteTab(a.dataset.id);
+    })
+    li.appendChild(b);
+    tabs.appendChild(li);
+}
+function deleteTab(id) {
+    shedules.splice(id, 1)
+    tabs.removeChild(tabs.children[1*id+1])
+    stateTrack = 'shedule removed';
+    checkState();
 
+}
 function showTable(index){
     let table = shedules[index].shedule
     let htmlTable = document.createElement("table");
@@ -104,7 +137,6 @@ function showTable(index){
     for (;i<table.length;) {
         let row = document.createElement("tr");
         if(i == 0) {
-            debugger
             let a=0;
             for (;a < table[i].length;) {
                 let col = document.createElement("th");
@@ -116,14 +148,12 @@ function showTable(index){
 
         } else {
             let a = 0;
-            debugger
             for (;a<table[i].length;){
                 let col = document.createElement("td");
                 col.innerHTML = table[i][a];
                 row.appendChild(col);
                 a++
             }
-            debugger
             htmlTable.appendChild(row);
         }
         i++
@@ -132,14 +162,14 @@ function showTable(index){
 
 }
     // DataUri check
-    let supportsDataUri = function() { 
-        let isOldIE = navigator.appName === "Microsoft Internet Explorer"; 
-        let isIE11 = !!navigator.userAgent.match(/Trident\/7\./); 
-       return ! (isOldIE || isIE11);  //Return true if not any IE 
-        };
+let supportsDataUri = function() { 
+    let isOldIE = navigator.appName === "Microsoft Internet Explorer"; 
+    let isIE11 = !!navigator.userAgent.match(/Trident\/7\./); 
+    return ! (isOldIE || isIE11);  //Return true if not any IE 
+};
            // table to csv
 
-    function  genCSVie(encodedUri) {
+function  genCSVie(encodedUri) {
     let csvData = decodeURIComponent(encodedUri);
 
     let iframe = document.getElementById('csvDownloadFrame');
@@ -193,10 +223,17 @@ function genCSV(index) {
     checkState(); 
 }
 function checkState() {
-    if (stateTrack == "CSV ready") {
+    if (stateTrack === 'CSV ready') {
         _aU.classList.remove('hidden')
+        _aU.reset();
         _aF.classList.add('hidden')
         linkContainer.classList.remove('hidden');
+    }else if (stateTrack === 'new calculator' || stateTrack === 'shedule removed') {
+        _aU.classList.add('hidden');
+        sheduleContainer.innerHTML = '';
+        linkContainer.classList.add('hidden');
+        _aF.classList.remove('hidden');
+        _aF.reset();
     }
 }
 function newCalc() {
