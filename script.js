@@ -14,7 +14,6 @@ function paybackShedule(shedule) {
 
 _aF.addEventListener('submit',  function(event) {
     // prevent multiply send request
-    
     event.preventDefault();
         const  PV = this.loanAmount.value,
           ir = Number(this.interestRate.value),
@@ -42,8 +41,8 @@ _aU.addEventListener('submit',  function(event) {
 /* PV - loanAmount,  r - interest rate, n - loanTerm, sd - startDate;
 * k - annuty coficient, mp - Monthly payments
 */ 
-function calcAnnuity() {const[PV, ir, n, sd, id, fr] = arguments;
-   
+function calcAnnuity(PV, ir, n, sd, id, fr) { 
+    // const [PV, ir, n, sd, id, fr] = arguments;
     const r = Big(ir).div(100).div(12),
           k = Big((r * (r.plus(1)).pow(n))/(((r.plus(1)).pow(n))-1)),        
           mp = Number(k.times(PV).toFixed(2))
@@ -63,7 +62,8 @@ function calcAnnuity() {const[PV, ir, n, sd, id, fr] = arguments;
           for (;i<=n;) {
             let pd = new Date(sd);
                 pd.setMonth(pd.getMonth()+i)
-            let x = new Array(7).fill(0);
+                // new Array(7).fill(0) ie fix
+            let x = [[],[],[],[],[],[],[]];
              x[6] = ir;
              x[5] = mp;
              x[4] = Number(ip).toFixed(2)*1;
@@ -100,50 +100,95 @@ function showTable(index){
     let table = shedules[index].shedule
     let htmlTable = document.createElement("table");
     sheduleContainer.innerHTML = '';
-    table.forEach((elm, ind) => {
+    let i=0 
+    for (;i<table.length;) {
         let row = document.createElement("tr");
-        if(ind == 0) {
-            elm.forEach(elm => {
+        if(i == 0) {
+            debugger
+            let a=0;
+            for (;a < table[i].length;) {
                 let col = document.createElement("th");
-                col.innerHTML = elm;
+                col.innerHTML = table[i][a];
                 row.appendChild(col);
-            })
+                a++;
+            }
             htmlTable.appendChild(row);
 
-        }else {
-            elm.forEach(elm => {
+        } else {
+            let a = 0;
+            debugger
+            for (;a<table[i].length;){
                 let col = document.createElement("td");
-                col.innerHTML = elm;
+                col.innerHTML = table[i][a];
                 row.appendChild(col);
-            })
+                a++
+            }
+            debugger
             htmlTable.appendChild(row);
         }
-
-    })
+        i++
+    }
     sheduleContainer.appendChild(htmlTable); // Required for FF
 
 }
-    // table to csv
+    // DataUri check
+    let supportsDataUri = function() { 
+        let isOldIE = navigator.appName === "Microsoft Internet Explorer"; 
+        let isIE11 = !!navigator.userAgent.match(/Trident\/7\./); 
+       return ! (isOldIE || isIE11);  //Return true if not any IE 
+        };
+           // table to csv
+
+    function  genCSVie(encodedUri) {
+    let csvData = decodeURIComponent(encodedUri);
+
+    let iframe = document.getElementById('csvDownloadFrame');
+    let createdAt = Date.now();
+    iframe = iframe.contentWindow || iframe.contentDocument;
+
+    csvData = 'sep=,\r\n' + csvData;
+
+    iframe.document.open("text/csv", "replace");
+    iframe.document.write(csvData);
+    iframe.document.close();
+    iframe.focus();
+    iframe.document.execCommand('SaveAs', true, "shedule_"+createdAt+".csv")
+}
 function genCSV(index) {
-
+  
     let table = shedules[index].shedule
-    let csvContent = "data:text/csv;charset=utf-8,";
-
-    table.forEach(function(rowArray){
-
-       let row = rowArray.join(",");
-       csvContent += row + "\r\n";
-    });
+    let csvContent = 'data:text/csv;charset=utf-8';
+    if ( supportsDataUri() ) {
+        csvContent = "data:text/csv;charset=utf-8,";
+    }
+    let i=0;
+    for (;i<table.length;) {
+        let row = table[i].join(",");
+        csvContent += row + "\r\n";
+        i++
+    }
     let createdAt = Date.now()
     let encodedUri = encodeURI(csvContent);
-    let link = document.createElement("a");
+    if ( ! supportsDataUri() ) {
+       let link = document.createElement("a");
+       link.classList.add('btn')
+       link.innerHTML= "Click Here to download as CSV";
+       linkContainer.insertAdjacentElement('afterbegin', link);
+       document.addEventListener('click', function () {
+           genCSVie(encodedUri);
+       });
+     ;
+      } else {
+        let link = document.createElement("a");
+    
+        link.setAttribute("href", encodedUri);
+        link.classList.add('btn')
+        link.setAttribute("download", "shedule_"+createdAt+".csv");
+        link.innerHTML= "Click Here to download as CSV";
+        linkContainer.innerHTML= '';
+        linkContainer.insertAdjacentElement('afterbegin', link);
+      }
 
-    link.setAttribute("href", encodedUri);
-    link.classList.add('btn')
-    link.setAttribute("download", "shedule_"+createdAt+".csv");
-    link.innerHTML= "Click Here to download as CSV";
-    linkContainer.innerHTML= '';
-    linkContainer.insertAdjacentElement('afterbegin', link);
     stateTrack = "CSV ready"
     checkState(); 
 }
